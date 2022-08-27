@@ -11,17 +11,19 @@
     const res = await axios.get("http://localhost:4050/api/todos");
     todos = res.data;
   });
-  function deleteTodo(id: number) {
-    console.log(id);
+  async function deleteTodo(id: number) {
+  const res = await axios.delete("http://localhost:4050/api/todos/"+id);
+   todos = res.data;
   }
 </script>
 
 <main>
   <h1>todos</h1>
+  
   {#each todos as t}
     <div class="todo">
       <h3>{t.todo}</h3>
-      <div on:click={deleteTodo(t.id)}>
+      <div on:click={() =>{ deleteTodo(t.id)}}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           class="h-6 w-6"
@@ -45,11 +47,15 @@
   .todo {
     height: 40px;
     display: flex;
-    width: 100%;
+    width: 95vw;
+    
     margin-bottom: 10px;
     padding: 10px 20px;
     background-color: gray;
     align-content: space-between;
+  }
+  .todo h3 {
+  width:100%;
   }
   .todo div svg {
     height: 20px;
