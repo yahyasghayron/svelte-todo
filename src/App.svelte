@@ -16,7 +16,7 @@ onMount(async () => {
   const res = await axios.delete("http://localhost:4050/api/todos/"+id);
    todos = res.data;
   }
-  async function refrechTodos(event){
+  async function refrechTodos(event:any){
    todos = event.detail.todos;
   }
 </script>
