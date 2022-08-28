@@ -1,13 +1,14 @@
-<script lang="ts">
+<script  lang="ts">
   import { onMount } from "svelte";
   import axios from "axios";
-  interface Todos {
+  import AddTodo  from "./lib/AddTodo.svelte";
+interface Todos {
     id: number;
     todo: string;
     done: boolean;
   }
   let todos: Todos[] = [];
-  onMount(async () => {
+onMount(async () => {
     const res = await axios.get("http://localhost:4050/api/todos");
     todos = res.data;
   });
@@ -15,12 +16,15 @@
   const res = await axios.delete("http://localhost:4050/api/todos/"+id);
    todos = res.data;
   }
+  async function refrechTodos(event){
+   todos = event.detail.todos;
+  }
 </script>
 
 <main>
   <h1>todos</h1>
-  
-  {#each todos as t}
+ <AddTodo on:createTodo="{refrechTodos}"/>  
+ {#each todos as t}
     <div class="todo">
       <h3>{t.todo}</h3>
       <div on:click={() =>{ deleteTodo(t.id)}}>
