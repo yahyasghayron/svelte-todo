@@ -1,37 +1,69 @@
-<script  lang="ts">
+<script lang="ts">
   import { onMount } from "svelte";
   import axios from "axios";
-  import AddTodo  from "./lib/AddTodo.svelte";
-interface Todos {
+  import AddTodo from "./lib/AddTodo.svelte";
+  interface Todos {
     id: number;
     todo: string;
     done: boolean;
   }
   let todos: Todos[] = [];
-onMount(async () => {
+  onMount(async () => {
     const res = await axios.get("http://localhost:4050/api/todos");
     todos = res.data;
   });
   async function deleteTodo(id: number) {
-  const res = await axios.delete("http://localhost:4050/api/todos/"+id);
-   todos = res.data;
+    const res = await axios.delete("http://localhost:4050/api/todos/" + id);
+    todos = res.data;
   }
-  async function refrechTodos(event:any){
-   todos = event.detail.todos;
+  async function refrechTodos(event: any) {
+    todos = event.detail.todos;
+  }
+  async function marckDone(id: number) {
+    const res = await axios.patch(
+      "http://localhost:4050/api/todos/" + id + "/done"
+    );
+    todos = res.data;
+  }
+  async function marckUndone(id: number) {
+    const res = await axios.patch(
+      "http://localhost:4050/api/todos/" + id + "/undone"
+    );
+    todos = res.data;
   }
 </script>
 
-<main>
+<main class="container">
   <h1>todos</h1>
- <AddTodo on:createTodo="{refrechTodos}"/>  
- {#each todos as t}
+  <AddTodo on:createTodo={refrechTodos} />
+  {#each todos as t}
     <div class="todo">
-      <h3>{t.todo}</h3>
-      <div on:click={() =>{ deleteTodo(t.id)}}>
+      {#if t.done}
+        <h3
+          on:click={() => {
+            marckUndone(t.id);
+          }}
+        >
+          ✔️
+          {t.todo}
+        </h3>
+      {/if}
+      {#if !t.done}
+        <h3
+          on:click={() => {
+            marckDone(t.id);
+          }}
+        >
+          {t.todo}
+        </h3>
+      {/if}
+      <div
+        on:click={() => {
+          deleteTodo(t.id);
+        }}
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="h-6 w-6"
-          fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
           stroke-width="2"
@@ -49,24 +81,22 @@ onMount(async () => {
 
 <style>
   .todo {
-    height: 40px;
+    height: 50px;
     display: flex;
-    width: 95vw;
-    
     margin-bottom: 10px;
     padding: 10px 20px;
     background-color: gray;
     align-content: space-between;
   }
   .todo h3 {
-  width:100%;
+    width: 100%;
   }
   .todo div svg {
-    height: 20px;
+    height: 30px;
   }
   .todo div {
-    padding: 10px;
     border-radius: 100px;
     background-color: pink;
+    color:white;
   }
 </style>

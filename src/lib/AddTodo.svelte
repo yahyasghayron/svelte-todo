@@ -13,11 +13,11 @@ const res = await axios.post("http://localhost:4050/api/todos",{todo: todo});
 dispatch("createTodo",{
 todos : res.data
 })
+todo = ""
 }
 </script>
 <div>
+<form on:submit|preventDefault="{createTodo}">
 <input bind:value="{todo}" type="text">
-<button on:click="{createTodo}">
-add todo
-</button>
+</form>
 </div>
